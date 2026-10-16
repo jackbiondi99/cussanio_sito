@@ -82,7 +82,7 @@ export function toISO(v){
   if (m) return `${m[1]}-${pad(m[2])}-${pad(m[3])}`;
   m = s.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})/);
   if (m) return `${m[3].length === 2 ? "20" + m[3] : m[3]}-${pad(m[2])}-${pad(m[1])}`;
-  return undefined; // non riconosciuta
+  return undefined;
 }
 const clean = v => {
   if (v == null) return null;
@@ -119,7 +119,6 @@ export function normalizeDB(input){
     sheets[name] = out;
   }
 
-  // Giocatori: nome breve ricavato se manca, Attivo di default "Sì"
   const seen = new Set();
   sheets.Giocatori = sheets.Giocatori.filter(p => {
     if (!p.Giocatore && p.Nome) p.Giocatore = (!p.Cognome || p.Cognome === "?") ? p.Nome : `${p.Nome[0]}. ${p.Cognome}`;
@@ -150,42 +149,77 @@ export function normalizeDB(input){
 // =====================================================================
 const BASE = () => (process.env.TUTTOCAMPO_BASE || "https://www.tuttocampo.it/Piemonte/TerzaCategoria/GironeBCuneo").replace(/\/$/, "");
 const slug = name => name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]/g, "");
-const ENT = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", agrave: "à", egrave: "è", eacute: "é", igrave: "ì", ograve: "ò", ugrave: "ù", Agrave: "À", Egrave: "È" };
+const ENT = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", ndash: "-", mdash: "-", agrave: "à", egrave: "è", eacute: "é", igrave: "ì", ograve: "ò", ugrave: "ù", Agrave: "À", Egrave: "È" };
 export function htmlToText(html){
   return html
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
     .replace(/<[^>]+>/g, " ")
     .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n))
     .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
     .replace(/&([a-z]+);/gi, (m, n) => ENT[n] ?? m)
+    .replace(/[\u2010-\u2015\u2212]/g, "-")
+    .replace(/[\u00A0\u2000-\u200B]/g, " ")
     .replace(/\s+/g, " ");
 }
 const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // Estrae le partite dal testo di una pagina "Calendario" di squadra.
-// Formati riconosciuti (testo della pagina):
-//   "1 Cussanio 4 0 Villar 2025 INFO"               -> partita giocata
-//   "3 Cussanio - 09/10 - Villafalletto INFO"        -> partita da giocare
+// Formati riconosciuti (anche con data/ora tra il numero di giornata e le squadre):
+//   "1 Cussanio 4 0 Villar 2025"        "1 Cussanio 4 - 0 Villar 2025"     -> giocata
+//   "3 Cussanio - 09/10 - Villafalletto" "3 09/10 Cussanio - Villafalletto" -> da giocare
 export function parseCalendar(text, teamNames){
+  const canon = new Map(teamNames.map(n => [n.toLowerCase(), n]));
+  const C = s => canon.get(s.toLowerCase()) || s;
   const alt = teamNames.slice().sort((a, b) => b.length - a.length).map(reEsc).join("|");
+  const T = `(${alt})`;
+  const G = `(?:^|\\s)(?:G\\.?\\s?)?(\\d{1,2})[ªa°]?`;                 // numero giornata
+  const DT = `(\\d{1,2})[\\/.](\\d{1,2})(?:[\\/.](\\d{2,4}))?`;          // data gg/mm(/aaaa)
+  const OPT_DT = `(?:\\s+(?:[a-zà]{3,9}\\.?\\s+)?\\d{1,2}[\\/.]\\d{1,2}(?:[\\/.]\\d{2,4})?)?(?:\\s+(?:ore\\s+)?\\d{1,2}[:.]\\d{2})?`;
+  const END = `(?=\\s|$)`;
   const out = [];
-  const played = new RegExp(`(?:^|\\s)(\\d{1,2})\\s+(${alt})\\s+(\\d{1,2})\\s*-?\\s*(\\d{1,2})\\s+(${alt})(?=\\s|$)`, "g");
-  const todo   = new RegExp(`(?:^|\\s)(\\d{1,2})\\s+(${alt})\\s+-\\s+(\\d{1,2})\\/(\\d{1,2})(?:\\/(\\d{2,4}))?\\s+-\\s+(${alt})(?=\\s|$)`, "g");
+  const add = (o) => { o.home = C(o.home); o.away = C(o.away); out.push(o); };
   let m;
-  while ((m = played.exec(text))) out.push({ g: +m[1], home: m[2], away: m[5], gh: +m[3], ga: +m[4] });
-  while ((m = todo.exec(text)))   out.push({ g: +m[1], home: m[2], away: m[6], day: +m[3], month: +m[4], year: m[5] ? +m[5] : null });
-  return out.filter(x => x.home !== x.away && x.g >= 1 && x.g <= 60);
+  const played = new RegExp(`${G}${OPT_DT}\\s+${T}\\s+(\\d{1,2})\\s*[-:]?\\s*(\\d{1,2})\\s+${T}${END}`, "gi");
+  while ((m = played.exec(text))) add({ g: +m[1], home: m[2], away: m[5], gh: +m[3], ga: +m[4] });
+  const todoA = new RegExp(`${G}\\s+${T}\\s+-?\\s*(?:[a-zà]{3,9}\\.?\\s+)?${DT}(?:\\s+(?:ore\\s+)?\\d{1,2}[:.]\\d{2})?\\s*-?\\s+${T}${END}`, "gi");
+  while ((m = todoA.exec(text))) add({ g: +m[1], home: m[2], away: m[6], day: +m[3], month: +m[4], year: m[5] ? +m[5] : null });
+  const todoB = new RegExp(`${G}\\s+(?:[a-zà]{3,9}\\.?\\s+)?${DT}(?:\\s+(?:ore\\s+)?\\d{1,2}[:.]\\d{2})?\\s+${T}\\s+(?:-|vs\\.?)\\s+${T}${END}`, "gi");
+  while ((m = todoB.exec(text))) add({ g: +m[1], home: m[5], away: m[6], day: +m[2], month: +m[3], year: m[4] ? +m[4] : null });
+  return out.filter(x => x.home !== x.away && x.g >= 1 && x.g <= 60 && (x.gh == null || (x.gh < 40 && x.ga < 40)));
 }
 
 async function fetchText(url){
   const ctl = new AbortController();
   const t = setTimeout(() => ctl.abort(), 12000);
   try {
-    const r = await fetch(url, { signal: ctl.signal, headers: { "user-agent": "Mozilla/5.0 (compatible; CussanioStats/1.0)", "accept-language": "it-IT,it;q=0.9" } });
+    const r = await fetch(url, { signal: ctl.signal, redirect: "follow", headers: {
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+      "accept": "text/html,application/xhtml+xml", "accept-language": "it-IT,it;q=0.9" } });
     if (!r.ok) throw new Error("HTTP " + r.status);
-    return await r.text();
+    const html = await r.text();
+    return { html, finalUrl: r.url };
   } finally { clearTimeout(t); }
+}
+
+// Diagnostica: descrive cosa è arrivato da una pagina (per capire perché non si riconoscono partite)
+function diagnose(team, url, res, names){
+  const text = htmlToText(res.html);
+  const title = (res.html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1]?.trim() || "(senza titolo)";
+  const lower = text.toLowerCase();
+  const found = names.filter(n => lower.includes(n.toLowerCase()));
+  const lines = [`Pagina di prova: ${team}`, `Indirizzo: ${res.finalUrl || url}`, `Titolo: ${htmlToText(title)}`,
+                 `Dimensione: ${res.html.length} caratteri · squadre del girone nominate nel testo: ${found.length}/${names.length}`];
+  if (/just a moment|cf-chl|captcha|attention required|access denied|enable javascript/i.test(res.html))
+    lines.push("→ Sembra una pagina di protezione anti-robot: Tuttocampo blocca le richieste dal server di Netlify.");
+  else if (found.length < 3)
+    lines.push("→ Nel testo non compaiono le squadre: il calendario è probabilmente caricato dopo, con JavaScript.");
+  let i = lower.search(/\b1\s+[a-z]/);
+  const k = found.length ? lower.indexOf(found.find(n => n !== team)?.toLowerCase() ?? found[0].toLowerCase()) : -1;
+  if (k >= 0) i = Math.max(0, k - 250);
+  lines.push("Estratto del testo letto:", "«" + text.slice(Math.max(0, i), Math.max(0, i) + 700).trim() + "»");
+  return lines.join("\n");
 }
 
 export async function syncTuttocampo({ fetcher = fetchText } = {}){
@@ -196,18 +230,21 @@ export async function syncTuttocampo({ fetcher = fetchText } = {}){
   const names = S.Squadre.map(t => t.Squadra).filter(Boolean);
   const meta = { at: new Date().toISOString(), ok: false, pages: 0, pagesFailed: [], updated: [], conflicts: [], added: [], errors: [] };
 
-  // 1. Lettura delle pagine (in parallelo, il limite delle funzioni programmate è 30 s)
-  const pages = await Promise.all(teams.map(async t => {
+  const raw = await Promise.all(teams.map(async t => {
     const url = `${BASE()}/Squadra/${slug(t.Squadra)}/${t.ID_Tuttocampo}/Calendario`;
-    try { return parseCalendar(htmlToText(await fetcher(url)), names); }
+    try { const res = await fetcher(url); return { t, url, res, games: parseCalendar(htmlToText(res.html), names) }; }
     catch (e) { meta.pagesFailed.push(`${t.Squadra}: ${e.message}`); return null; }
   }));
-  meta.pages = pages.filter(Boolean).length;
-  const found = pages.filter(Boolean).flat();
+  const pages = raw.filter(Boolean);
+  meta.pages = pages.length;
+  const found = pages.flatMap(p => p.games);
   if (!meta.pages) { meta.errors.push("Nessuna pagina di Tuttocampo è stata letta."); await saveMeta(meta); return meta; }
-  if (!found.length) { meta.errors.push("Pagine lette, ma nessuna partita riconosciuta: probabilmente Tuttocampo ha cambiato formato."); await saveMeta(meta); return meta; }
+  if (!found.length) {
+    const p = pages.find(p => p.t.Squadra === "Cussanio") || pages[0];
+    meta.errors.push("Pagine lette, ma nessuna partita riconosciuta.\n\n" + diagnose(p.t.Squadra, p.url, p.res, names));
+    await saveMeta(meta); return meta;
+  }
 
-  // 2. Unione dei dati letti da più pagine (ogni partita compare in due calendari)
   const merged = new Map();
   for (const x of found) {
     const k = `${x.g}|${x.home}|${x.away}`;
@@ -217,13 +254,11 @@ export async function syncTuttocampo({ fetcher = fetchText } = {}){
     if (x.gh != null && prev.gh == null) merged.set(k, Object.assign(x, { incoerente: prev.incoerente }));
   }
 
-  // anno di inizio stagione: dalla prima data presente, altrimenti dall'anno corrente
   const dates = S.Risultati_Girone.map(r => r.Data).filter(Boolean).sort();
   const y0 = dates.length ? +dates[0].slice(0, 4) : new Date().getFullYear();
   const isoOf = x => `${x.year ? (x.year < 100 ? 2000 + x.year : x.year) : (x.month >= 7 ? y0 : y0 + 1)}-${pad(x.month)}-${pad(x.day)}`;
   const label = r => `G${r.Giornata} ${r.Casa}-${r.Trasferta}`;
 
-  // 3. Applicazione: si riempiono solo i campi vuoti, i risultati già presenti non vengono mai sovrascritti
   let changed = false;
   for (const x of merged.values()) {
     if (x.incoerente) { meta.conflicts.push(`G${x.g} ${x.home}-${x.away}: punteggi diversi tra due pagine di Tuttocampo, non aggiornato.`); continue; }
@@ -261,9 +296,11 @@ export async function syncTuttocampo({ fetcher = fetchText } = {}){
       }
     }
   }
+  meta.recognized = merged.size;
   S.Risultati_Girone.sort((a, b) => (a.Giornata - b.Giornata) || String(a.Casa).localeCompare(String(b.Casa)));
   if (changed) { await backupDB(await loadDB(), "prima dell'aggiornamento da Tuttocampo"); await saveDB(db); }
   meta.ok = true; meta.changed = changed;
+  if (!changed) meta.updated.push(`Nessuna modifica: le ${merged.size} partite lette su Tuttocampo coincidono con i dati del sito.`);
   await saveMeta(meta);
   return meta;
 }

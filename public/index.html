@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#151515">
+<title>A.S.D. Cussanio · Stagione 2026/27</title>
+<link rel="icon" href="https://content-s3.tuttocampo.it/Teams/200/1320658.png">
+<style>
+  :root{
+    --bg:#151515;
+    --card:#F4A3C8; --card-dark:#E883B3; --card-light:#F8C2DB;
+    --ink:#1b1b1b; --muted:#6b3f55; --bar:#5d5d5d;
+    --win:#2e7d32; --draw:#8d8d8d; --loss:#c62828;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       font-size:15px;line-height:1.35;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+  .num{font-variant-numeric:tabular-nums}
+
+  header{display:flex;align-items:center;gap:12px;padding:16px 16px 12px;max-width:1100px;margin:0 auto;color:#fff}
+  header .logo{width:52px;height:52px;border-radius:50%;background:#fff;object-fit:contain;flex:none}
+  header h1{font-size:20px;letter-spacing:.5px;line-height:1.1}
+  header p{font-size:12.5px;color:#bdbdbd;margin-top:3px}
+
+  nav{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid #2b2b2b}
+  nav .wrap{display:flex;max-width:1100px;margin:0 auto;padding:0 8px;overflow-x:auto;scrollbar-width:none}
+  nav button{flex:1;min-width:84px;background:none;border:0;color:#a9a9a9;font:inherit;font-size:14px;font-weight:600;
+             padding:12px 6px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+  nav button.on{color:#fff;border-bottom-color:var(--card)}
+
+  main{max-width:1100px;margin:0 auto;padding:14px 12px}
+  section.tab{display:none}
+  section.tab.on{display:block}
+
+  .card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:12px;overflow:hidden}
+  .card h2{font-size:16px;margin-bottom:10px}
+  .card h3{font-size:14px;margin-bottom:8px}
+  .sub{font-size:12px;color:var(--muted)}
+  .grid2{display:grid;grid-template-columns:1fr;gap:12px}
+  @media (min-width:600px){ .grid2{grid-template-columns:1fr 1fr} }
+  .grid2 > .card{margin-bottom:0}
+  .spots{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+  .spots > .card{margin-bottom:0}
+  @media (min-width:600px){ .spots{grid-template-columns:1fr 1fr} }
+  @media (min-width:860px){ .spots.three{grid-template-columns:1fr 1fr 1fr} }
+  .stack > * + *{margin-top:12px}
+  .section-title{color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin:18px 4px 10px}
+  .section-title:first-child{margin-top:4px}
+
+  .hero{display:flex;align-items:center;gap:16px}
+  .hero .pos{font-size:56px;font-weight:800;line-height:1}
+  .hero .pts{font-size:15px;font-weight:600}
+  .hero .pts b{font-size:26px}
+  .chips{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:14px}
+  .chip{background:var(--card-light);border-radius:10px;text-align:center;padding:6px 2px}
+  .chip b{display:block;font-size:18px}
+  .chip span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .form{display:flex;gap:6px;margin-top:12px;align-items:center;flex-wrap:wrap}
+  .pill{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+        color:#fff;font-size:12px;font-weight:700}
+  .pill.V{background:var(--win)} .pill.N{background:var(--draw)} .pill.P{background:var(--loss)}
+
+  .match{display:grid;grid-template-columns:78px 1fr auto;gap:8px;align-items:center;padding:9px 0;border-top:1px solid rgba(0,0,0,.12)}
+  .match:first-of-type{border-top:0}
+  .match .when{font-size:12px;line-height:1.25;color:var(--muted)}
+  .match .when b{display:block;font-size:13.5px;white-space:nowrap;color:var(--ink)}
+  .team{display:flex;align-items:center;gap:8px;min-width:0}
+  .team span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tlogo{width:24px;height:24px;border-radius:50%;background:#fff;object-fit:contain;flex:none}
+  .badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:var(--ink);color:#fff}
+  .badge.T{background:#fff;color:var(--ink)}
+  .res{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;padding:9px 0;border-top:1px solid rgba(0,0,0,.12)}
+  .res:first-of-type{border-top:0}
+  .res .team:last-child{flex-direction:row-reverse;text-align:right}
+  .score{font-weight:800;font-size:16px;background:var(--card-light);border-radius:8px;padding:3px 10px;min-width:56px;text-align:center}
+  .res .meta{grid-column:1/-1;font-size:11.5px;color:var(--muted);margin-bottom:-4px}
+
+  table{width:100%;border-collapse:collapse}
+  th{font-size:12.5px;text-align:center;padding:6px 3px;border-bottom:1.5px solid rgba(0,0,0,.35);white-space:nowrap;font-weight:700}
+  td{font-size:13.5px;text-align:center;padding:6px 3px;white-space:nowrap}
+  th.l,td.l{text-align:left}
+  td.name{max-width:150px;overflow:hidden;text-overflow:ellipsis}
+  tr.me td{background:var(--card-dark);font-weight:700}
+  tr.me td:first-child{border-radius:8px 0 0 8px} tr.me td:last-child{border-radius:0 8px 8px 0}
+  th.sort{cursor:pointer;user-select:none}
+  th.sort.on::after{content:" ▾";font-size:10px}
+  tbody tr + tr td{border-top:1px solid rgba(0,0,0,.06)}
+  .tscroll{overflow-x:auto;margin:0 -4px;padding:0 4px}
+  .legend{font-size:11.5px;color:var(--muted);margin-top:8px}
+
+  /* schede giocatore: la foto riempie tutta l'altezza */
+  .spot{display:flex;gap:12px;align-items:stretch;padding:0}
+  .ph{width:84px;min-height:84px;height:auto;align-self:stretch;flex:none;object-fit:cover;object-position:center top;background:var(--card-dark);display:block}
+  .ph.init{display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:var(--ink)}
+  .spot .txt{padding:10px 10px 10px 0;min-width:0;align-self:center}
+  .spot .txt b{display:block;font-size:20px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .spot .txt .val{font-size:13px;margin-top:2px}
+  .spot .txt .val strong{font-size:15px}
+
+  .leader{padding:0}
+  .leader .sep{height:2px;background:rgba(0,0,0,.18);margin:0 14px}
+  .leader ol{list-style:none;padding:6px 14px 10px}
+  .leader li{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;font-size:14px;padding:5px 0}
+  .leader li + li{border-top:1px solid rgba(0,0,0,.07)}
+  .leader li .r{color:var(--muted);font-size:12.5px;font-weight:700}
+  .leader li .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .leader li .v{font-weight:700}
+  .leader li .v small{font-weight:400;color:var(--muted);font-size:11.5px;margin-left:4px}
+  .leader .none{font-size:13px;color:var(--muted);padding:8px 14px 12px}
+
+  .bars .row{display:grid;grid-template-columns:86px 1fr 40px;gap:8px;align-items:center;font-size:12.5px;padding:3px 0}
+  .bars .row .n{text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bars .track{height:10px;background:rgba(0,0,0,.08);border-radius:5px;overflow:hidden}
+  .bars .fill{height:100%;background:var(--bar);border-radius:5px;display:block}
+  .bars .v{font-weight:700}
+  .empty{font-size:13px;color:var(--muted);padding:6px 0}
+
+  .pgrid{display:grid;grid-template-columns:1fr;gap:12px}
+  .pgrid > .card{margin-bottom:0}
+  @media (min-width:860px){
+    .pgrid{grid-template-columns:1.25fr 1fr}
+    .pgrid .rank{grid-row:span 2}
+  }
+
+  footer{max-width:1100px;margin:6px auto 0;padding:0 16px;color:#8f8f8f;font-size:12px;text-align:center}
+  footer a{color:#8f8f8f}
+  #status{color:#fff;text-align:center;padding:40px 16px}
+  #status .card{color:var(--ink);text-align:left;max-width:520px;margin:0 auto}
+
+  @media (max-width:380px){
+    body{font-size:14px}
+    td{font-size:12.5px} th{font-size:11.5px}
+    .chips{gap:4px} .chip b{font-size:16px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img class="logo" src="https://content-s3.tuttocampo.it/Teams/200/1320658.png" alt="" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">
+  <div>
+    <h1>A.S.D. CUSSANIO</h1>
+    <p>Terza Categoria Cuneo · Girone B · 2026/27</p>
+  </div>
+</header>
+
+<nav><div class="wrap">
+  <button data-tab="squadra" class="on">Squadra</button>
+  <button data-tab="classifica">Classifica</button>
+  <button data-tab="giocatori">Giocatori</button>
+  <button data-tab="partitelle">Partitelle</button>
+</div></nav>
+
+<div id="status">Caricamento dati…</div>
+
+<main id="app" hidden>
+  <section class="tab on" id="tab-squadra"></section>
+  <section class="tab" id="tab-classifica"></section>
+  <section class="tab" id="tab-giocatori"></section>
+  <section class="tab" id="tab-partitelle"></section>
+</main>
+
+<footer id="foot" hidden></footer>
+
+<script>
+/* =====================================================================
+   CONFIGURAZIONE
+   ===================================================================== */
+const DATA_URL  = '/api/data';
+const TEAM      = 'Cussanio';
+const TEAM_LOGO = 'https://content-s3.tuttocampo.it/Teams/200/1320658.png';
+/* JAC: la scheda 2026-27 (ID 1329090) non ha logo; si usa quello della scheda J.A.C. (ID 1285776). */
+const LOGO_OVERRIDE = { 'JAC': 'https://content-s3.tuttocampo.it/Teams/200/1285776.png' };
+
+/* =====================================================================
+   CALCOLI
+   ===================================================================== */
+const isNum = v => typeof v === 'number' && !isNaN(v);
+const yes = v => v == null || /^(s|si|sì|yes|y|1|true|x)$/i.test(String(v).trim());
+const yesStrict = v => v != null && /^(s|si|sì|yes|y|1|true|x)$/i.test(String(v).trim());
+const norm = s => String(s ?? '').trim();
+function toDate(v){
+  if (v == null) return null;
+  if (isNum(v)) return new Date(Math.round((v - 25569) * 864e5));
+  const iso = String(v).match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (iso) return new Date(Date.UTC(+iso[1], iso[2] - 1, +iso[3]));
+  const m = String(v).match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})/);
+  if (m) return new Date(Date.UTC(m[3].length === 2 ? 2000 + +m[3] : +m[3], m[2] - 1, +m[1]));
+  const d = new Date(v); return isNaN(d) ? null : d;
+}
+const fmtDate = (d, opt) => d ? d.toLocaleDateString('it-IT', Object.assign({ timeZone: 'UTC' }, opt)) : '';
+const pct = x => x == null ? '–' : Math.round(x * 100) + '%';
+const dec2 = x => x == null ? '–' : x.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const byName = (a, b) => a.name.localeCompare(b.name, 'it');
+
+function buildModel(d){
+  const S = d['Squadre'] || [], R = d['Risultati_Girone'] || [], G = d['Giocatori'] || [];
+  const T = d['Tabellino'] || [], P = d['Partitelle'] || [];
+
+  const teams = {};
+  const addTeam = (name, pen = 0, logo = null) => {
+    name = norm(name); if (!name) return;
+    if (!teams[name]) teams[name] = { name, pen: 0, logo: null };
+    if (isNum(pen)) teams[name].pen = pen;
+    if (logo) teams[name].logo = logo;
+  };
+  S.forEach(r => {
+    const id = r['ID_Tuttocampo'];
+    addTeam(r['Squadra'], r['Penalità'] ?? r['Penalita'],
+      r['Logo_URL'] || (id ? `https://content-s3.tuttocampo.it/Teams/200/${id}.png` : null));
+  });
+
+  const matches = R.filter(r => norm(r['Casa']) && norm(r['Trasferta'])).map(r => {
+    const m = { g: r['Giornata'], date: toDate(r['Data']), home: norm(r['Casa']), away: norm(r['Trasferta']),
+                gh: r['Gol_Casa'], ga: r['Gol_Trasferta'] };
+    m.played = isNum(m.gh) && isNum(m.ga);
+    addTeam(m.home); addTeam(m.away);
+    return m;
+  });
+  Object.values(teams).forEach(t => { if (LOGO_OVERRIDE[t.name]) t.logo = LOGO_OVERRIDE[t.name]; });
+  if (teams[TEAM] && !teams[TEAM].logo) teams[TEAM].logo = TEAM_LOGO;
+  const sortDate = (a, b) => (a.date || 0) - (b.date || 0) || (a.g || 0) - (b.g || 0);
+
+  const st = {};
+  Object.values(teams).forEach(t => st[t.name] = { name: t.name, G: 0, V: 0, N: 0, P: 0, GF: 0, GS: 0, pen: t.pen || 0 });
+  matches.filter(m => m.played).forEach(m => {
+    const h = st[m.home], a = st[m.away];
+    h.G++; a.G++; h.GF += m.gh; h.GS += m.ga; a.GF += m.ga; a.GS += m.gh;
+    if (m.gh > m.ga) { h.V++; a.P++; } else if (m.gh < m.ga) { a.V++; h.P++; } else { h.N++; a.N++; }
+  });
+  const table = Object.values(st).map(t => Object.assign(t, { Pt: 3 * t.V + t.N - t.pen, DR: t.GF - t.GS }))
+    .sort((a, b) => b.Pt - a.Pt || b.DR - a.DR || b.GF - a.GF || byName(a, b));
+  table.forEach((t, i) => t.pos = i + 1);
+
+  const mine = matches.filter(m => m.home === TEAM || m.away === TEAM);
+  const played = mine.filter(m => m.played).sort(sortDate);
+  const next = mine.filter(m => !m.played).sort(sortDate).slice(0, 3);
+  const outcome = m => { const f = m.home === TEAM ? m.gh : m.ga, s = m.home === TEAM ? m.ga : m.gh; return f > s ? 'V' : f < s ? 'P' : 'N'; };
+  const lastRound = Math.max(0, ...matches.filter(m => m.played).map(m => m.g || 0));
+
+  const players = {};
+  const addPlayer = (r) => {
+    let name = norm(r['Giocatore']);
+    const nome = norm(r['Nome']), cogn = norm(r['Cognome']);
+    if (!name && nome) name = (!cogn || cogn === '?') ? nome : nome[0] + '. ' + cogn;
+    if (!name) return;
+    const id = r['ID_Tuttocampo'];
+    players[name] = { name, ruolo: norm(r['Ruolo']), active: yes(r['Attivo']),
+      foto: r['Foto_URL'] || (id ? `https://b2-content.tuttocampo.it/Players/Original/${id}.png?class=p400` : null),
+      pres: 0, tit: 0, sub: 0, usc: 0, gol: 0, ass: 0, pV: 0, pN: 0, pS: 0, pA: 0 };
+  };
+  G.forEach(addPlayer);
+  const P_ = name => players[name] || (addPlayer({ Giocatore: name, Attivo: 'Sì' }), players[name]);
+
+  T.forEach(r => {
+    const n = norm(r['Giocatore']); if (!n) return;
+    const p = P_(n), stato = norm(r['Stato']).toLowerCase();
+    if (stato.startsWith('tit')) { p.tit++; p.pres++; }
+    else if (stato.startsWith('sub')) { p.sub++; p.pres++; }
+    if (yesStrict(r['Sostituito'])) p.usc++;
+    if (isNum(r['Gol'])) p.gol += r['Gol'];
+    if (isNum(r['Assist'])) p.ass += r['Assist'];
+  });
+
+  const sessions = new Set();
+  P.forEach(r => {
+    const n = norm(r['Giocatore']); if (!n) return;
+    if (r['Giornata'] != null) sessions.add(String(r['Giornata']));
+    const p = P_(n), ris = norm(r['Risultato']).toLowerCase();
+    if (ris.startsWith('vit')) p.pV++;
+    else if (ris.startsWith('par')) p.pN++;
+    else if (ris.startsWith('sco')) p.pS++;
+    else p.pA++;
+  });
+  const nSess = sessions.size;
+  const roster = Object.values(players).filter(p => p.active);
+  roster.forEach(p => {
+    p.pG = p.pV + p.pN + p.pS;
+    p.pPV = p.pG ? p.pV / p.pG : null;
+    p.pPres = nSess ? p.pG / nSess : null;
+    p.score = p.pG ? p.pV * 1000 + p.pPV * 100 : -1;
+  });
+  const ranking = roster.slice().sort((a, b) => b.score - a.score || byName(a, b));
+  ranking.forEach((p, i) => p.rank = (i && ranking[i - 1].score === p.score) ? ranking[i - 1].rank : i + 1);
+
+  const withGames = roster.filter(p => p.pG > 0);
+  const mvp = withGames.slice().sort((a, b) => b.pV - a.pV || b.pPV - a.pPV || byName(a, b))[0];
+  const mvpTies = mvp ? withGames.filter(p => p.score === mvp.score).length - 1 : 0;
+  const nera = withGames.slice().sort((a, b) => b.pS - a.pS || a.pPV - b.pPV || byName(a, b))[0];
+  const neraTies = nera ? withGames.filter(p => p.pS === nera.pS && p.pPV === nera.pPV).length - 1 : 0;
+
+  const soglia = Math.ceil(nSess * 0.5);
+  const eligible = withGames.filter(p => p.pG >= soglia);
+  const top5V = eligible.slice().sort((a, b) => b.pPV - a.pPV || b.pG - a.pG || byName(a, b)).slice(0, 5);
+  const worst5V = eligible.slice().sort((a, b) => a.pPV - b.pPV || b.pG - a.pG || byName(a, b)).slice(0, 5);
+  const top5P = roster.slice().sort((a, b) => (b.pPres ?? 0) - (a.pPres ?? 0) || b.pV - a.pV || byName(a, b)).slice(0, 5);
+  const worst5P = roster.slice().sort((a, b) => (a.pPres ?? 0) - (b.pPres ?? 0) || byName(a, b)).slice(0, 5);
+
+  const squad = Object.values(players).filter(p => p.active || p.pres > 0);
+  squad.forEach(p => { p.golPG = p.pres ? p.gol / p.pres : 0; p.assPG = p.pres ? p.ass / p.pres : 0; });
+  const scorers   = squad.filter(p => p.gol > 0).sort((a, b) => b.gol - a.gol || b.pres - a.pres || byName(a, b));
+  const assisters = squad.filter(p => p.ass > 0).sort((a, b) => b.ass - a.ass || b.pres - a.pres || byName(a, b));
+  const golAvg    = squad.filter(p => p.gol > 0).sort((a, b) => b.golPG - a.golPG || b.gol - a.gol || byName(a, b));
+  const assAvg    = squad.filter(p => p.ass > 0).sort((a, b) => b.assPG - a.assPG || b.ass - a.ass || byName(a, b));
+  const presente  = squad.filter(p => p.pres > 0).sort((a, b) => b.pres - a.pres || a.usc - b.usc || byName(a, b))[0];
+  const supersub  = squad.filter(p => p.sub > 0).sort((a, b) => b.sub - a.sub || b.pres - a.pres || byName(a, b))[0];
+  const fiato     = squad.filter(p => p.usc > 0).sort((a, b) => b.usc - a.usc || a.pres - b.pres || byName(a, b))[0];
+  const tiesOf = (best, eq) => best ? squad.filter(p => p !== best && eq(p, best)).length : 0;
+
+  return { teams, table, played, next, outcome, lastRound, squad, ranking, mvp, mvpTies, nera, neraTies,
+           top5V, worst5V, top5P, worst5P, nSess, soglia,
+           scorers, assisters, golAvg, assAvg, presente, supersub, fiato,
+           presenteTies: tiesOf(presente, (p, b) => p.pres === b.pres && p.usc === b.usc),
+           supersubTies: tiesOf(supersub, (p, b) => p.sub === b.sub && p.pres === b.pres),
+           fiatoTies:    tiesOf(fiato,    (p, b) => p.usc === b.usc && p.pres === b.pres),
+           me: table.find(t => t.name === TEAM) };
+}
+
+/* =====================================================================
+   RENDER
+   ===================================================================== */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const initials = n => esc(String(n).replace(/[^A-Za-zÀ-ÿ ]/g, ' ').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase());
+function imgFail(el){
+  const d = document.createElement('div');
+  d.className = el.className + ' init'; d.textContent = el.dataset.init || '';
+  el.replaceWith(d);
+}
+const teamLogo = (M, name) => {
+  const t = M.teams[name];
+  return t && t.logo
+    ? `<img class="tlogo" src="${esc(t.logo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">`
+    : `<span class="tlogo"></span>`;
+};
+const photo = p => p && p.foto
+  ? `<img class="ph" src="${esc(p.foto)}" alt="" loading="lazy" referrerpolicy="no-referrer" data-init="${initials(p.name)}" onerror="imgFail(this)">`
+  : `<div class="ph init">${p ? initials(p.name) : ''}</div>`;
+const shortDay = d => fmtDate(d, { weekday: 'short' }).replace('.', '');
+const ddmm = d => fmtDate(d, { day: '2-digit', month: '2-digit' });
+const tiesTxt = n => n > 0 ? `<div class="sub">a pari merito con altri ${n}</div>` : '';
+
+function spotlight(title, p, value, ties){
+  return `<div class="card spot">${photo(p)}<div class="txt">
+    <div class="sub">${esc(title)}</div><b>${p ? esc(p.name) : '–'}</b>
+    ${p && value ? `<div class="val">${value}</div>` : ''}
+    ${p ? tiesTxt(ties) : '<div class="sub">nessun dato ancora</div>'}</div></div>`;
+}
+function leaderCard(title, list, mainVal, rowVal){
+  const first = list[0];
+  const head = `<div class="spot">${photo(first)}<div class="txt">
+      <div class="sub">${esc(title)}</div><b>${first ? esc(first.name) : '–'}</b>
+      ${first ? `<div class="val">${mainVal(first)}</div>` : ''}</div></div>`;
+  const others = list.slice(1, 5);
+  const body = !first ? `<div class="sep"></div><div class="none">Nessun dato ancora</div>`
+    : others.length ? `<div class="sep"></div><ol>${others.map((p, i) =>
+        `<li><span class="r">${i + 2}.</span><span class="n">${esc(p.name)}</span><span class="v num">${rowVal(p)}</span></li>`).join('')}</ol>`
+    : `<div class="sep"></div><div class="none">Nessun altro giocatore in classifica</div>`;
+  return `<div class="card leader">${head}${body}</div>`;
+}
+function barList(title, list, key, note){
+  const rows = list.length ? list.map(p => {
+    const v = p[key] ?? 0;
+    return `<div class="row"><span class="n">${esc(p.name)}</span>
+      <span class="track"><span class="fill" style="width:${Math.round(v * 100)}%"></span></span>
+      <span class="v num">${pct(p[key])}</span></div>`;
+  }).join('') : `<div class="empty">Nessun dato ancora</div>`;
+  return `<div class="card"><h3>${esc(title)}</h3><div class="bars">${rows}</div>${note ? `<div class="legend">${note}</div>` : ''}</div>`;
+}
+
+function renderSquadra(M){
+  const me = M.me;
+  if (!me) return `<div class="card">Squadra "${esc(TEAM)}" non trovata nel foglio Squadre.</div>`;
+  const form = M.played.slice(-5).map(m => `<span class="pill ${M.outcome(m)}">${M.outcome(m)}</span>`).join('') || '<span class="sub">Nessuna partita giocata</span>';
+  const hero = `<div class="card">
+    <div class="hero"><div class="pos num">${me.pos}°</div>
+      <div><div class="pts"><b class="num">${me.Pt}</b> punti</div>
+      <div class="sub">${M.lastRound ? `dopo la ${M.lastRound}ª giornata` : 'campionato non ancora iniziato'}</div></div></div>
+    <div class="chips num">
+      ${[['G', me.G], ['V', me.V], ['N', me.N], ['P', me.P], ['GF', me.GF], ['GS', me.GS]].map(([k, v]) => `<div class="chip"><b>${v}</b><span>${k}</span></div>`).join('')}
+    </div>
+    <div class="form"><span class="sub" style="margin-right:4px">Forma</span>${form}</div></div>`;
+
+  const next = M.next.length ? M.next.map(m => {
+    const home = m.home === TEAM, opp = home ? m.away : m.home;
+    return `<div class="match"><div class="when"><b>${shortDay(m.date)} ${ddmm(m.date)}</b>${m.g ? m.g + 'ª giornata' : ''}</div>
+      <div class="team">${teamLogo(M, opp)}<span>${esc(opp)}</span></div>
+      <span class="badge ${home ? 'C' : 'T'}">${home ? 'Casa' : 'Trasferta'}</span></div>`;
+  }).join('') : '<div class="empty">Nessuna partita in programma</div>';
+
+  const last = M.played.slice(-5).reverse().map(m => `<div class="res">
+      <div class="meta">${m.g ? m.g + 'ª giornata · ' : ''}${fmtDate(m.date, { weekday: 'long', day: 'numeric', month: 'long' })}</div>
+      <div class="team">${teamLogo(M, m.home)}<span${m.home === TEAM ? ' style="font-weight:700"' : ''}>${esc(m.home)}</span></div>
+      <div class="score num">${m.gh} - ${m.ga}</div>
+      <div class="team">${teamLogo(M, m.away)}<span${m.away === TEAM ? ' style="font-weight:700"' : ''}>${esc(m.away)}</span></div></div>`).join('')
+    || '<div class="empty">Nessun risultato ancora</div>';
+
+  const top = M.scorers[0], ass = M.assisters[0];
+  const topTies = top ? M.scorers.filter(p => p !== top && p.gol === top.gol).length : 0;
+  const assTies = ass ? M.assisters.filter(p => p !== ass && p.ass === ass.ass).length : 0;
+  return hero + `<div class="card"><h2>Prossime partite</h2>${next}</div>`
+    + `<div class="spots three">
+         ${spotlight('Capocannoniere', top, top ? `<strong>${top.gol}</strong> gol` : '', topTies)}
+         ${spotlight('Miglior assistman', ass, ass ? `<strong>${ass.ass}</strong> assist` : '', assTies)}
+         ${spotlight('MVP partitelle', M.mvp, M.mvp ? `${M.mvp.pV} vittorie · ${pct(M.mvp.pPV)}` : '', M.mvpTies)}
+       </div>`
+    + `<div class="card"><h2>Ultimi risultati</h2>${last}</div>`;
+}
+
+function renderClassifica(M){
+  const rows = M.table.map(t => `<tr class="${t.name === TEAM ? 'me' : ''}">
+      <td class="num">${t.pos}</td>
+      <td class="l name"><div class="team">${teamLogo(M, t.name)}<span>${esc(t.name)}</span></div></td>
+      <td class="num"><b>${t.Pt}</b></td><td class="num">${t.G}</td><td class="num">${t.V}</td><td class="num">${t.N}</td><td class="num">${t.P}</td>
+      <td class="num">${t.GF}:${t.GS}</td><td class="num">${t.DR > 0 ? '+' : ''}${t.DR}</td></tr>`).join('');
+  const pen = M.table.some(t => t.pen) ? ' Le penalizzazioni sono già sottratte ai punti.' : '';
+  return `<div class="card"><h2>Classifica · Girone B</h2><div class="tscroll"><table>
+    <thead><tr><th>#</th><th class="l">Squadra</th><th>Pt</th><th>G</th><th>V</th><th>N</th><th>P</th><th>Gol</th><th>DR</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>
+    <div class="legend">A pari punti: differenza reti, poi gol fatti.${pen}</div></div>`;
+}
+
+let gSort = { key: 'gol', dir: -1 };
+function renderGiocatori(M){
+  const pres = p => `${p.pres} ${p.pres === 1 ? 'presenza' : 'presenze'}`;
+  const leaders = `<div class="section-title">Classifiche</div>
+    <div class="spots">
+      ${leaderCard('Capocannoniere', M.scorers, p => `<strong>${p.gol}</strong> gol in ${pres(p)}`, p => `${p.gol} <small>gol</small>`)}
+      ${leaderCard('Miglior assistman', M.assisters, p => `<strong>${p.ass}</strong> assist in ${pres(p)}`, p => `${p.ass} <small>assist</small>`)}
+      ${leaderCard('Media gol a partita', M.golAvg,
+          p => `<strong>${dec2(p.golPG)}</strong> gol a partita · ${p.gol} in ${pres(p)}`, p => `${dec2(p.golPG)} <small>${p.gol}/${p.pres}</small>`)}
+      ${leaderCard('Media assist a partita', M.assAvg,
+          p => `<strong>${dec2(p.assPG)}</strong> assist a partita · ${p.ass} in ${pres(p)}`, p => `${dec2(p.assPG)} <small>${p.ass}/${p.pres}</small>`)}
+    </div>`;
+  const special = `<div class="section-title">Premi speciali</div>
+    <div class="spots three">
+      ${spotlight('Il più presente', M.presente,
+          M.presente ? `<strong>${M.presente.pres}</strong> presenze · sostituito ${M.presente.usc} ${M.presente.usc === 1 ? 'volta' : 'volte'}` : '', M.presenteTies)}
+      ${spotlight('Supersub', M.supersub,
+          M.supersub ? `entrato <strong>${M.supersub.sub}</strong> ${M.supersub.sub === 1 ? 'volta' : 'volte'} dalla panchina · ${pres(M.supersub)}` : '', M.supersubTies)}
+      ${spotlight('Fiato corto', M.fiato,
+          M.fiato ? `sostituito <strong>${M.fiato.usc}</strong> ${M.fiato.usc === 1 ? 'volta' : 'volte'} · ${pres(M.fiato)}` : '', M.fiatoTies)}
+    </div>`;
+  const cols = [['name', 'Giocatore', 'l'], ['pres', 'Pres'], ['tit', 'Tit'], ['sub', 'Sub'], ['usc', 'Usc'], ['gol', 'Gol'], ['ass', 'Ass']];
+  const list = M.squad.slice().sort((a, b) => {
+    const k = gSort.key;
+    if (k === 'name') return byName(a, b);
+    return gSort.dir * (a[k] - b[k]) || b.gol - a.gol || b.ass - a.ass || b.pres - a.pres || byName(a, b);
+  });
+  const rows = list.map(p => `<tr><td class="l name">${esc(p.name)}</td>${cols.slice(1).map(([k]) =>
+      `<td class="num">${k === 'gol' || k === 'ass' ? (p[k] ? `<b>${p[k]}</b>` : '0') : p[k]}</td>`).join('')}</tr>`).join('');
+  const table = `<div class="section-title">Tutti i giocatori</div>
+    <div class="card"><h2>Statistiche campionato</h2><div class="tscroll"><table>
+      <thead><tr>${cols.map(([k, l, c]) => `<th class="sort ${c || ''} ${gSort.key === k ? 'on' : ''}" data-k="${k}">${l}</th>`).join('')}</tr></thead>
+      <tbody>${rows}</tbody></table></div>
+      <div class="legend">Pres = presenze · Tit = da titolare · Sub = entrato dalla panchina · Usc = sostituito. Tocca un'intestazione per ordinare.</div></div>`;
+  return leaders + special + table;
+}
+
+function renderPartitelle(M){
+  const rows = M.ranking.map(p => `<tr>
+      <td class="num">${p.rank}</td><td class="l name">${esc(p.name)}</td>
+      <td class="num">${p.pV}</td><td class="num">${p.pN}</td><td class="num">${p.pS}</td>
+      <td class="num">${pct(p.pPV)}</td><td class="num">${pct(p.pPres)}</td></tr>`).join('');
+  const rank = `<div class="card rank"><h2>Power ranking</h2><div class="tscroll"><table>
+      <thead><tr><th>#</th><th class="l">Giocatore</th><th>V</th><th>P</th><th>S</th><th>% V</th><th>% Pres.</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+      <div class="legend">Ordine: vittorie, poi % vittorie. Sessioni giocate: ${M.nSess}.</div></div>`;
+  const note = `Solo chi ha giocato almeno ${M.soglia} ${M.soglia === 1 ? 'sessione' : 'sessioni'} su ${M.nSess}.`;
+  return `<div class="pgrid">${rank}
+    <div class="stack">
+      ${spotlight('MVP partitelle', M.mvp, M.mvp ? `${M.mvp.pV} vittorie · ${pct(M.mvp.pPV)}` : '', M.mvpTies)}
+      ${spotlight('Maglia nera', M.nera, M.nera ? `${M.nera.pS} sconfitte · ${pct(M.nera.pPV)} vittorie` : '', M.neraTies)}
+      <div class="grid2">
+        ${barList('Top 5 · % vittorie', M.top5V, 'pPV', note)}
+        ${barList('Peggiori 5 · % vittorie', M.worst5V, 'pPV', note)}
+        ${barList('Top 5 · % presenze', M.top5P, 'pPres')}
+        ${barList('Peggiori 5 · % presenze', M.worst5P, 'pPres')}
+      </div>
+    </div></div>`;
+}
+
+let MODEL = null;
+function renderAll(M, info){
+  MODEL = M;
+  document.getElementById('tab-squadra').innerHTML = renderSquadra(M);
+  document.getElementById('tab-classifica').innerHTML = renderClassifica(M);
+  document.getElementById('tab-giocatori').innerHTML = renderGiocatori(M);
+  document.getElementById('tab-partitelle').innerHTML = renderPartitelle(M);
+  const foot = document.getElementById('foot');
+  foot.innerHTML = `${esc(info)} · <a href="/admin.html" rel="nofollow">area riservata</a>`;
+  foot.hidden = false;
+  document.getElementById('status').hidden = true;
+  document.getElementById('app').hidden = false;
+}
+
+document.addEventListener('click', e => {
+  const th = e.target.closest('th.sort');
+  if (th && MODEL){
+    const k = th.dataset.k;
+    gSort = { key: k, dir: gSort.key === k ? -gSort.dir : -1 };
+    document.getElementById('tab-giocatori').innerHTML = renderGiocatori(MODEL);
+  }
+});
+
+function showTab(id){
+  if (!document.getElementById('tab-' + id)) id = 'squadra';
+  document.querySelectorAll('section.tab').forEach(s => s.classList.toggle('on', s.id === 'tab-' + id));
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === id));
+}
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  history.replaceState(null, '', '#' + b.dataset.tab); showTab(b.dataset.tab); window.scrollTo({ top: 0 });
+});
+showTab(location.hash.slice(1));
+window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+
+/* ---------------- caricamento ---------------- */
+const fmtDT = iso => new Date(iso).toLocaleString('it-IT', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' });
+(async () => {
+  try {
+    const res = await fetch(DATA_URL, { cache: 'no-store' });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok || !j.sheets) throw new Error(j.error || `Errore ${res.status}`);
+    let info = j.updatedAt ? 'Dati aggiornati al ' + fmtDT(j.updatedAt) : '';
+    if (j.sync && j.sync.ok) info += ` · controllo Tuttocampo: ${fmtDT(j.sync.at)}`;
+    renderAll(buildModel(j.sheets), info);
+  } catch (err) {
+    const st = document.getElementById('status');
+    st.innerHTML = `<div class="card"><h2>Dati non disponibili</h2><p style="font-size:14px">${esc(err.message)}</p>
+      <p style="font-size:13px;margin-top:8px"><a href="/admin.html">Area riservata</a></p></div>`;
+  }
+})();
+</script>
+</body>
+</html>

@@ -22,7 +22,7 @@
   nav button{flex:1;background:none;border:0;color:#a9a9a9;font:inherit;font-size:14px;font-weight:600;padding:12px 6px;border-bottom:3px solid transparent;cursor:pointer}
   nav button.on{color:#fff;border-bottom-color:var(--card)}
   main{max-width:820px;margin:0 auto;padding:14px 12px}
-  section{display:none} section.on{display:block}
+  main > section{display:none} main > section.on{display:block}
   .card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:12px}
   .card h2{font-size:16px;margin-bottom:8px}
   .sub{font-size:12.5px;color:var(--muted)}
@@ -34,33 +34,64 @@
   .btn:disabled{opacity:.5;cursor:default}
   .btn.full{width:100%}
   .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  input[type=password], input[type=date]{font:inherit;padding:10px 12px;border-radius:10px;border:1.5px solid rgba(0,0,0,.25);background:#fff;width:100%}
+  input[type=password], input[type=date], select{font:inherit;padding:10px 12px;border-radius:10px;border:1.5px solid rgba(0,0,0,.25);background:#fff;width:100%;color:var(--ink)}
   label.lbl{display:block;font-size:12.5px;font-weight:700;margin-bottom:4px}
   .msg{border-radius:10px;padding:10px 12px;font-size:13.5px;margin-top:10px;white-space:pre-line}
   .msg.ok{background:#e3f2e5;color:#1b5e20} .msg.err{background:#fde7e7;color:#8e1b1b} .msg.info{background:var(--card-light)}
   .msg ul{margin:6px 0 0 18px}
+  .legend{font-size:12px;color:var(--muted);margin-top:8px}
+  .summary{display:flex;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:700;margin:10px 0}
+  .summary span{background:var(--card-light);border-radius:8px;padding:4px 8px}
+  .summary span.warn{background:#ffe0b2}
 
-  /* --- form partitella --- */
-  .players{margin-top:6px}
-  .pl{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:7px 0;border-top:1px solid rgba(0,0,0,.08)}
-  .pl:first-child{border-top:0}
-  .pl .n{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .seg{display:inline-grid;grid-template-columns:repeat(4,auto);border-radius:10px;overflow:hidden;border:1.5px solid rgba(0,0,0,.25)}
-  .seg button{border:0;background:var(--card-light);font:inherit;font-weight:800;font-size:13px;min-width:42px;padding:8px 0;cursor:pointer;color:var(--ink)}
+  /* segmenti (partitella e tabellino) */
+  .seg{display:inline-grid;grid-auto-flow:column;border-radius:10px;overflow:hidden;border:1.5px solid rgba(0,0,0,.25)}
+  .seg button{border:0;background:var(--card-light);font:inherit;font-weight:800;font-size:12.5px;min-width:42px;padding:8px 4px;cursor:pointer;color:var(--ink)}
   .seg button + button{border-left:1.5px solid rgba(0,0,0,.15)}
-  .seg button.on[data-v=Assente]{background:var(--abs)}
+  .seg button.on{background:var(--ink);color:#fff}
+  .seg button.on[data-v=Assente]{background:var(--abs);color:var(--ink)}
   .seg button.on[data-v=Vittoria]{background:var(--win);color:#fff}
   .seg button.on[data-v=Pareggio]{background:var(--draw);color:#fff}
   .seg button.on[data-v=Sconfitta]{background:var(--loss);color:#fff}
-  .legend{font-size:12px;color:var(--muted);margin-top:8px}
-  .summary{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;font-weight:700;margin:10px 0}
-  .summary span{background:var(--card-light);border-radius:8px;padding:4px 8px}
+
+  /* partitella */
+  .pl{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:7px 0;border-top:1px solid rgba(0,0,0,.08)}
+  .pl:first-child{border-top:0}
+  .pl .n{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .sess{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 0;border-top:1px solid rgba(0,0,0,.08)}
   .sess:first-child{border-top:0}
   .sess .btn{padding:6px 10px;font-size:12.5px}
-  ul.list{margin:6px 0 0 18px;font-size:13.5px}
-  ul.list li{margin:2px 0}
-  .steps{margin:6px 0 0 18px;font-size:14px} .steps li{margin:4px 0}
+
+  /* risultati giornata */
+  .gm{padding:10px 0;border-top:1px solid rgba(0,0,0,.12)}
+  .gm:first-child{border-top:0}
+  .gm.me{background:var(--card-dark);border-radius:10px;padding:10px;margin:4px -4px;border-top:0}
+  .gm .when{font-size:11.5px;color:var(--muted);margin-bottom:4px}
+  .gm .tm{display:grid;grid-template-columns:24px 1fr 64px;gap:8px;align-items:center;padding:3px 0}
+  .gm .tm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+  .tlogo{width:24px;height:24px;border-radius:50%;background:#fff;object-fit:contain}
+  .gm input{font:inherit;font-size:18px;font-weight:800;text-align:center;width:64px;padding:6px 4px;border-radius:10px;border:1.5px solid rgba(0,0,0,.25);background:#fff}
+  .gm.done .when::after{content:" · inserito";font-weight:700}
+
+  /* tabellino */
+  .mh{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;background:var(--card-light);border-radius:10px;padding:10px;margin:10px 0}
+  .mh .t{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mh .t:last-child{text-align:right}
+  .mh .s{font-weight:800;font-size:20px}
+  .tp{padding:8px 0;border-top:1px solid rgba(0,0,0,.08)}
+  .tp:first-child{border-top:0}
+  .tp .top{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+  .tp .n{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tp .n small{font-weight:400;color:var(--muted);font-size:11.5px;margin-left:4px}
+  .tp .det{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;padding-left:2px}
+  .tp.off .n{color:var(--muted);font-weight:500}
+  .chk{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;background:var(--card-light);border-radius:10px;padding:6px 10px;cursor:pointer;user-select:none}
+  .chk input{width:18px;height:18px;accent-color:var(--ink)}
+  .stp{display:inline-flex;align-items:center;gap:0;font-size:13px;font-weight:700;background:var(--card-light);border-radius:10px;overflow:hidden}
+  .stp .l{padding:0 8px}
+  .stp button{border:0;background:rgba(0,0,0,.08);font:inherit;font-size:17px;font-weight:800;width:34px;height:34px;cursor:pointer}
+  .stp b{min-width:24px;text-align:center;font-size:15px}
+
   #login{max-width:420px;margin:30px auto}
 </style>
 </head>
@@ -87,19 +118,41 @@
 <!-- ============ APP ============ -->
 <div id="app" hidden>
   <nav><div class="wrap">
-    <button data-s="partitella" class="on">Partitella</button>
+    <button data-s="camp" class="on">Campionato</button>
+    <button data-s="partitella">Partitella</button>
     <button data-s="excel">Dati Excel</button>
-    <button data-s="tc">Tuttocampo</button>
   </div></nav>
   <main>
-    <section id="s-partitella" class="on">
+    <!-- ---------- CAMPIONATO ---------- -->
+    <section id="s-camp" class="on">
+      <div class="card">
+        <h2>Risultati della giornata</h2>
+        <label class="lbl" for="rG">Giornata</label>
+        <select id="rG"></select>
+        <div id="rList" style="margin-top:8px"></div>
+        <div class="legend">Scrivi solo i gol. Lascia vuote entrambe le caselle se una partita è rinviata.</div>
+        <div style="margin-top:12px"><button class="btn full" id="rSave">Salva risultati</button></div>
+        <div id="rMsg"></div>
+      </div>
+
+      <div class="card">
+        <h2>Tabellino Cussanio</h2>
+        <label class="lbl" for="tG">Partita</label>
+        <select id="tG"></select>
+        <div id="tBody"></div>
+        <div id="tMsg"></div>
+      </div>
+    </section>
+
+    <!-- ---------- PARTITELLA ---------- -->
+    <section id="s-partitella">
       <div class="card">
         <h2>Nuova partitella</h2>
         <label class="lbl" for="pDate">Data</label>
         <input type="date" id="pDate">
         <div class="summary" id="pSum"></div>
         <div class="row"><button class="btn light" id="allAbs" type="button">Tutti assenti</button></div>
-        <div class="players" id="pList"></div>
+        <div id="pList" style="margin-top:6px"></div>
         <div class="legend">A = assente · V = vittoria · P = pareggio · S = sconfitta. Compaiono solo i giocatori con Attivo = Sì.</div>
         <div style="margin-top:12px"><button class="btn full" id="pSave">Salva partitella</button></div>
         <div id="pMsg"></div>
@@ -110,6 +163,7 @@
       </div>
     </section>
 
+    <!-- ---------- EXCEL ---------- -->
     <section id="s-excel">
       <div class="card">
         <h2>1 · Scarica i dati attuali</h2>
@@ -119,22 +173,11 @@
       <div class="card">
         <h2>2 · Carica il file corretto</h2>
         <p>Il file caricato <b>sostituisce tutti i dati</b> del sito. Prima di sostituirli viene fatta una copia di sicurezza.</p>
-        <p class="sub">Parti sempre dall'ultimo file scaricato, così non perdi gli aggiornamenti automatici e le partitelle inserite nel frattempo.</p>
+        <p class="sub">Parti sempre dall'ultimo file scaricato, così non perdi risultati e partitelle inseriti nel frattempo.</p>
         <div style="margin-top:10px"><label class="btn light" for="up">Scegli file .xlsx</label>
           <input type="file" id="up" accept=".xlsx" hidden></div>
         <div id="upMsg"></div>
       </div>
-    </section>
-
-    <section id="s-tc">
-      <div class="card">
-        <h2>Aggiornamento da Tuttocampo</h2>
-        <p>Il sito legge da solo calendario e risultati di tutto il girone il sabato, la domenica e il lunedì (mattina e sera).</p>
-        <p class="sub">I risultati già presenti non vengono mai sovrascritti: se Tuttocampo riporta un punteggio diverso, compare tra le differenze e decidi tu se correggerlo via Excel.</p>
-        <div style="margin-top:10px"><button class="btn" id="syncNow">Aggiorna adesso</button></div>
-        <div id="syncMsg"></div>
-      </div>
-      <div class="card"><h2>Ultimo aggiornamento</h2><div id="syncInfo" class="sub">–</div></div>
     </section>
   </main>
 </div>
@@ -142,11 +185,17 @@
 <script type="module">
 import { readWorkbook, writeWorkbook } from './xlsx.js';
 
+const TEAM = 'Cussanio';
+const LOGO_OVERRIDE = { 'JAC': 'https://content-s3.tuttocampo.it/Teams/200/1285776.png' };
+
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const msg = (el, type, html) => { $(el).innerHTML = html ? `<div class="msg ${type}">${html}</div>` : ''; };
-const fmtDT = iso => iso ? new Date(iso).toLocaleString('it-IT', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '–';
 const fmtD = iso => iso ? iso.split('-').reverse().join('/') : '–';
+const dayName = iso => { if (!iso) return ''; const [y, m, d] = iso.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('it-IT', { weekday: 'short', day: '2-digit', month: '2-digit', timeZone: 'UTC' }); };
+const yes = v => v == null || /^(s|si|sì|yes|y|1|true|x)$/i.test(String(v).trim());
+const has = r => r.Gol_Casa != null && r.Gol_Trasferta != null;
 let TOKEN = sessionStorage.getItem('cussanioToken');
 let DATA = null;
 
@@ -158,7 +207,7 @@ async function api(path, opt = {}){
   return j;
 }
 
-/* ---------------- login ---------------- */
+/* ================= login ================= */
 $('loginForm').onsubmit = async e => {
   e.preventDefault();
   try {
@@ -175,30 +224,193 @@ async function start(){
   $('login').hidden = true; $('app').hidden = false; $('logout').hidden = false;
   await reload();
 }
-async function reload(){
+async function reload(keep = {}){
   const st = await api('/api/admin/status');
   DATA = st.hasData ? await api('/api/data') : null;
-  renderPartitella(); renderSessions(); renderSync(st.sync);
+  renderRounds(keep.round); renderTabSelect(keep.tab); renderPartitella(); renderSessions();
   if (!st.hasData) msg('upMsg', 'info', 'Il sito non ha ancora dati: carica qui il tuo file Excel attuale per iniziare.');
 }
 
-/* ---------------- tabs ---------------- */
+/* ================= tabs ================= */
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
-  document.querySelectorAll('main section').forEach(s => s.classList.toggle('on', s.id === 's-' + b.dataset.s));
+  document.querySelectorAll('main > section').forEach(s => s.classList.toggle('on', s.id === 's-' + b.dataset.s));
 });
 
-/* ---------------- partitella ---------------- */
+/* ================= helpers dati ================= */
+const matches = () => DATA?.sheets.Risultati_Girone || [];
+const logos = () => {
+  const m = {};
+  (DATA?.sheets.Squadre || []).forEach(t => m[t.Squadra] = LOGO_OVERRIDE[t.Squadra] || t.Logo_URL ||
+    (t.ID_Tuttocampo ? `https://content-s3.tuttocampo.it/Teams/200/${t.ID_Tuttocampo}.png` : null));
+  return m;
+};
+const logoImg = (L, n) => L[n] ? `<img class="tlogo" src="${esc(L[n])}" alt="" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">` : '<span class="tlogo"></span>';
+const roundsList = () => [...new Set(matches().map(r => r.Giornata).filter(g => g != null))].sort((a, b) => a - b);
+const firstOpenRound = () => roundsList().find(g => matches().filter(r => r.Giornata === g).some(r => !has(r)));
+
+/* ================= RISULTATI ================= */
+function renderRounds(keep){
+  const rs = roundsList();
+  if (!DATA || !rs.length){ $('rG').innerHTML = ''; $('rList').innerHTML = '<p class="sub">Nessun calendario: carica prima il file Excel.</p>'; $('rSave').disabled = true; return; }
+  $('rSave').disabled = false;
+  const open = firstOpenRound();
+  $('rG').innerHTML = rs.map(g => {
+    const ms = matches().filter(r => r.Giornata === g), done = ms.filter(has).length;
+    const d = ms.map(r => r.Data).filter(Boolean).sort()[0];
+    const st = done === ms.length ? '✓ completa' : done ? `${done}/${ms.length} inseriti` : 'da inserire';
+    return `<option value="${g}">Giornata ${g}${d ? ' · ' + fmtD(d).slice(0, 5) : ''} · ${st}${g === open ? '  ◀ prossima' : ''}</option>`;
+  }).join('');
+  $('rG').value = String(keep ?? open ?? rs[rs.length - 1]);
+  renderRoundMatches();
+}
+function renderRoundMatches(){
+  const g = +$('rG').value, L = logos();
+  const ms = matches().filter(r => r.Giornata === g).sort((a, b) => (a.Data || '').localeCompare(b.Data || '') || a.Casa.localeCompare(b.Casa));
+  const all = new Set((DATA?.sheets.Squadre || []).map(t => t.Squadra));
+  ms.forEach(r => { all.delete(r.Casa); all.delete(r.Trasferta); });
+  $('rList').innerHTML = ms.map((r, i) => `
+    <div class="gm ${r.Casa === TEAM || r.Trasferta === TEAM ? 'me' : ''} ${has(r) ? 'done' : ''}" data-i="${i}" data-c="${esc(r.Casa)}" data-t="${esc(r.Trasferta)}">
+      <div class="when">${esc(dayName(r.Data))}</div>
+      <div class="tm">${logoImg(L, r.Casa)}<span>${esc(r.Casa)}</span><input type="number" inputmode="numeric" min="0" max="40" data-k="gc" value="${r.Gol_Casa ?? ''}" aria-label="Gol ${esc(r.Casa)}"></div>
+      <div class="tm">${logoImg(L, r.Trasferta)}<span>${esc(r.Trasferta)}</span><input type="number" inputmode="numeric" min="0" max="40" data-k="gt" value="${r.Gol_Trasferta ?? ''}" aria-label="Gol ${esc(r.Trasferta)}"></div>
+    </div>`).join('') + (all.size ? `<p class="legend">Riposa: ${[...all].map(esc).join(', ')}</p>` : '');
+  msg('rMsg');
+}
+$('rG').onchange = renderRoundMatches;
+$('rList').addEventListener('focusin', e => { if (e.target.tagName === 'INPUT') e.target.select(); });
+$('rSave').onclick = async () => {
+  const g = +$('rG').value;
+  const risultati = [...$('rList').querySelectorAll('.gm')].map(el => ({
+    casa: el.dataset.c, trasferta: el.dataset.t,
+    gc: el.querySelector('[data-k=gc]').value.trim(), gt: el.querySelector('[data-k=gt]').value.trim() }));
+  const half = risultati.find(r => (r.gc === '') !== (r.gt === ''));
+  if (half) return msg('rMsg', 'err', `${esc(half.casa)} - ${esc(half.trasferta)}: manca uno dei due punteggi.`);
+  const vuote = risultati.filter(r => r.gc === '').length;
+  if (vuote === risultati.length && !confirm('Nessun risultato inserito: vuoi salvare comunque (cancella i risultati della giornata)?')) return;
+  $('rSave').disabled = true;
+  try {
+    const j = await api('/api/admin/risultati', { method: 'POST', body: JSON.stringify({ giornata: g, risultati }) });
+    const mine = risultati.find(r => r.casa === TEAM || r.trasferta === TEAM);
+    await reload({ round: j.completa ? undefined : g, tab: mine && mine.gc !== '' ? g : undefined });
+    msg('rMsg', 'ok', `Giornata ${g} salvata${vuote ? ` (${vuote} ${vuote === 1 ? 'partita' : 'partite'} ancora senza risultato)` : ''}. Il sito è già aggiornato.` +
+      (mine && mine.gc !== '' ? '\nOra compila il tabellino del Cussanio qui sotto.' : ''));
+  } catch (e) { msg('rMsg', 'err', esc(e.message)); }
+  finally { $('rSave').disabled = false; }
+};
+
+/* ================= TABELLINO ================= */
+const STATI = [['', '–'], ['Non entrato', 'PAN'], ['Titolare', 'TIT'], ['Subentrato', 'SUB']];
+let TAB = { g: null, p: {} };
+const myMatches = () => matches().filter(r => (r.Casa === TEAM || r.Trasferta === TEAM) && has(r)).sort((a, b) => a.Giornata - b.Giornata);
+const tabRows = g => (DATA?.sheets.Tabellino || []).filter(r => r.Giornata === g);
+
+function renderTabSelect(keep){
+  const ms = myMatches();
+  if (!ms.length){ $('tG').innerHTML = ''; $('tBody').innerHTML = '<p class="sub" style="margin-top:8px">Inserisci prima il risultato di una partita del Cussanio.</p>'; return; }
+  $('tG').innerHTML = ms.map(r => {
+    const n = tabRows(r.Giornata).length;
+    return `<option value="${r.Giornata}">G${r.Giornata} · ${esc(r.Casa)} ${r.Gol_Casa}-${r.Gol_Trasferta} ${esc(r.Trasferta)} · ${n ? 'compilato' : 'da compilare'}</option>`;
+  }).join('');
+  const todo = ms.find(r => !tabRows(r.Giornata).length);
+  $('tG').value = String(keep ?? (todo || ms[ms.length - 1]).Giornata);
+  loadTab();
+}
+function loadTab(){
+  const g = +$('tG').value;
+  const rows = tabRows(g);
+  const active = (DATA.sheets.Giocatori || []).filter(p => p.Giocatore && yes(p.Attivo)).map(p => p.Giocatore);
+  const names = [...new Set([...active, ...rows.map(r => r.Giocatore)])];
+  TAB = { g, order: names, p: {} };
+  names.forEach(n => {
+    const r = rows.find(x => x.Giocatore === n);
+    TAB.p[n] = r ? { stato: r.Stato || '', usc: yes(r.Sostituito) && r.Sostituito != null, gol: r.Gol || 0, ass: r.Assist || 0 }
+                 : { stato: '', usc: false, gol: 0, ass: 0 };
+  });
+  renderTab(); msg('tMsg');
+}
+$('tG').onchange = loadTab;
+
+const role = n => (DATA.sheets.Giocatori.find(p => p.Giocatore === n) || {}).Ruolo || '';
+function renderTab(){
+  const m = myMatches().find(r => r.Giornata === TAB.g);
+  const L = logos();
+  const head = `<div class="mh"><span class="t">${esc(m.Casa)}</span><span class="s">${m.Gol_Casa} - ${m.Gol_Trasferta}</span><span class="t">${esc(m.Trasferta)}</span></div>`;
+  const list = TAB.order.map(n => {
+    const s = TAB.p[n], played = s.stato === 'Titolare' || s.stato === 'Subentrato';
+    return `<div class="tp ${s.stato ? '' : 'off'}" data-p="${esc(n)}">
+      <div class="top"><span class="n">${esc(n)}<small>${esc(role(n))}</small></span>
+        <span class="seg">${STATI.map(([v, l]) => `<button type="button" data-st="${v}" class="${s.stato === v ? 'on' : ''}">${l}</button>`).join('')}</span></div>
+      ${played ? `<div class="det">
+        <label class="chk"><input type="checkbox" data-usc ${s.usc ? 'checked' : ''}>${s.stato === 'Titolare' ? 'Sostituito' : 'Uscito'}</label>
+        <span class="stp"><span class="l">Gol</span><button type="button" data-d="gol" data-v="-1">−</button><b>${s.gol}</b><button type="button" data-d="gol" data-v="1">+</button></span>
+        <span class="stp"><span class="l">Assist</span><button type="button" data-d="ass" data-v="-1">−</button><b>${s.ass}</b><button type="button" data-d="ass" data-v="1">+</button></span>
+      </div>` : ''}</div>`;
+  }).join('');
+  $('tBody').innerHTML = head + `<div class="summary" id="tSum"></div><div id="tList">${list}</div>
+    <div class="legend">– = non convocato · PAN = in panchina, non entrato · TIT = titolare · SUB = entrato dalla panchina.</div>
+    <div style="margin-top:12px"><button class="btn full" id="tSave">Salva tabellino</button></div>`;
+  $('tSave').onclick = saveTab;
+  renderTabSum();
+}
+function teamGoals(){
+  const m = myMatches().find(r => r.Giornata === TAB.g);
+  return m.Casa === TEAM ? m.Gol_Casa : m.Gol_Trasferta;
+}
+function tabStats(){
+  const v = Object.values(TAB.p);
+  return { tit: v.filter(s => s.stato === 'Titolare').length, sub: v.filter(s => s.stato === 'Subentrato').length,
+           pan: v.filter(s => s.stato === 'Non entrato').length, usc: v.filter(s => s.usc && (s.stato === 'Titolare' || s.stato === 'Subentrato')).length,
+           gol: v.reduce((a, s) => a + (s.stato === 'Titolare' || s.stato === 'Subentrato' ? s.gol : 0), 0),
+           ass: v.reduce((a, s) => a + (s.stato === 'Titolare' || s.stato === 'Subentrato' ? s.ass : 0), 0) };
+}
+function renderTabSum(){
+  const t = tabStats(), tg = teamGoals();
+  $('tSum').innerHTML = `<span class="${t.tit !== 11 ? 'warn' : ''}">Titolari ${t.tit}/11</span><span>Subentrati ${t.sub}</span><span>Sostituiti ${t.usc}</span>
+    <span>Panchina ${t.pan}</span><span class="${t.gol !== tg ? 'warn' : ''}">Gol ${t.gol}/${tg}</span><span class="${t.ass > t.gol ? 'warn' : ''}">Assist ${t.ass}</span>`;
+}
+$('tBody').addEventListener('click', e => {
+  const row = e.target.closest('.tp'); if (!row) return;
+  const s = TAB.p[row.dataset.p];
+  const st = e.target.closest('button[data-st]');
+  if (st){ s.stato = st.dataset.st; if (!(s.stato === 'Titolare' || s.stato === 'Subentrato')) { s.usc = false; s.gol = 0; s.ass = 0; }
+           const y = window.scrollY; renderTab(); window.scrollTo(0, y); return; }
+  const d = e.target.closest('button[data-d]');
+  if (d){ s[d.dataset.d] = Math.max(0, Math.min(20, s[d.dataset.d] + +d.dataset.v)); d.parentElement.querySelector('b').textContent = s[d.dataset.d]; renderTabSum(); }
+});
+$('tBody').addEventListener('change', e => {
+  if (!e.target.matches('[data-usc]')) return;
+  TAB.p[e.target.closest('.tp').dataset.p].usc = e.target.checked; renderTabSum();
+});
+async function saveTab(){
+  const righe = TAB.order.filter(n => TAB.p[n].stato).map(n => {
+    const s = TAB.p[n]; return { giocatore: n, stato: s.stato, sostituito: s.usc, gol: s.gol, assist: s.ass };
+  });
+  const t = tabStats(), tg = teamGoals(), warn = [];
+  if (!righe.length) return msg('tMsg', 'err', 'Indica almeno i titolari.');
+  if (t.tit !== 11) warn.push(`i titolari sono ${t.tit} invece di 11`);
+  if (t.gol !== tg) warn.push(`i gol dei giocatori sono ${t.gol}, la squadra ne ha segnati ${tg} (ok se ci sono autogol)`);
+  if (t.ass > t.gol) warn.push(`gli assist (${t.ass}) sono più dei gol (${t.gol})`);
+  if (t.sub > t.usc) warn.push(`sono entrati ${t.sub} giocatori ma ne sono usciti ${t.usc}`);
+  if (!confirm(`Salvare il tabellino della giornata ${TAB.g}?` + (warn.length ? '\n\nAttenzione:\n• ' + warn.join('\n• ') : ''))) return;
+  $('tSave').disabled = true;
+  try {
+    await api('/api/admin/tabellino', { method: 'POST', body: JSON.stringify({ giornata: TAB.g, righe }) });
+    const g = TAB.g; await reload({ tab: g });
+    msg('tMsg', 'ok', `Tabellino della giornata ${g} salvato (${righe.length} giocatori). Il sito è già aggiornato.`);
+  } catch (e) { msg('tMsg', 'err', esc(e.message)); $('tSave').disabled = false; }
+}
+
+/* ================= PARTITELLA ================= */
 const CHOICES = [['Assente', 'A'], ['Vittoria', 'V'], ['Pareggio', 'P'], ['Sconfitta', 'S']];
 let choice = {};
-const yes = v => v == null || /^(s|si|sì|yes|y|1|true|x)$/i.test(String(v).trim());
 const activePlayers = () => (DATA?.sheets.Giocatori || []).filter(p => p.Giocatore && yes(p.Attivo)).map(p => p.Giocatore);
 
 function renderPartitella(){
   $('pDate').value ||= new Date().toISOString().slice(0, 10);
-  const list = activePlayers();
   if (!DATA){ $('pList').innerHTML = '<p class="sub">Carica prima i dati dal tab "Dati Excel".</p>'; $('pSave').disabled = true; return; }
   $('pSave').disabled = false;
+  const list = activePlayers();
   list.forEach(n => choice[n] ||= 'Assente');
   $('pList').innerHTML = list.map(n => `<div class="pl"><span class="n">${esc(n)}</span><span class="seg" data-p="${esc(n)}">${
     CHOICES.map(([v, l]) => `<button type="button" data-v="${v}" class="${choice[n] === v ? 'on' : ''}" aria-label="${v}">${l}</button>`).join('')}</span></div>`).join('');
@@ -235,9 +447,9 @@ $('pSave').onclick = async () => {
   finally { $('pSave').disabled = false; }
 };
 function renderSessions(){
-  const rows = DATA?.sheets.Partitelle || [];
   const by = {};
-  rows.forEach(r => { const g = r.Giornata; (by[g] ||= { g, data: r.Data, V: 0, P: 0, S: 0, A: 0 }); by[g][{ Vittoria: 'V', Pareggio: 'P', Sconfitta: 'S' }[r.Risultato] || 'A']++; });
+  (DATA?.sheets.Partitelle || []).forEach(r => { const g = r.Giornata; (by[g] ||= { g, data: r.Data, V: 0, P: 0, S: 0, A: 0 });
+    by[g][{ Vittoria: 'V', Pareggio: 'P', Sconfitta: 'S' }[r.Risultato] || 'A']++; });
   const list = Object.values(by).sort((a, b) => b.g - a.g);
   $('sessList').innerHTML = list.length ? list.map(s => `<div class="sess"><div><b>Partitella ${s.g}</b> · ${s.data ? fmtD(s.data) : 'senza data'}
       <div class="sub">${s.V} V · ${s.P} P · ${s.S} S · ${s.A} assenti</div></div>
@@ -250,7 +462,7 @@ $('sessList').onclick = async e => {
   catch (err) { alert(err.message); }
 };
 
-/* ---------------- Excel ---------------- */
+/* ================= EXCEL ================= */
 const SCHEMA = [
   { name: 'Giocatori', table: 'tbl_Giocatori', columns: [
     { key: 'Giocatore', width: 16 }, { key: 'Nome', width: 14 }, { key: 'Cognome', width: 16 },
@@ -278,17 +490,15 @@ const LEGGIMI = [
   ['• Non rinominare fogli e intestazioni delle colonne. Puoi aggiungere o eliminare righe.'],
   ['• Giocatori: la colonna Giocatore è il nome breve usato in Tabellino e Partitelle (deve essere unico). Attivo = No lo nasconde dal sito.'],
   ['• Foto: basta inserire ID_Tuttocampo (il numero nell\'indirizzo della scheda giocatore) e lasciare vuoto Foto_URL, oppure incollare l\'indirizzo della foto.'],
-  ['• Risultati_Girone: lascia vuoti i gol delle partite non giocate. I risultati già presenti non vengono toccati dall\'aggiornamento automatico.'],
-  ['• Tabellino: una riga per ogni giocatore convocato. Stato = Titolare / Subentrato / Non entrato. Sostituito = Sì se è uscito.'],
-  ['• Partitelle: Giornata è il numero progressivo della partitella. Di solito si inseriscono dal modulo del sito, non da qui.'],
+  ['• Risultati_Girone e Tabellino: di solito si compilano dal tab "Campionato" del sito; qui puoi correggere o modificare il calendario.'],
+  ['• Partitelle: Giornata è il numero progressivo della partitella. Di solito si inseriscono dal modulo del sito.'],
   [''],
   ['Il file caricato SOSTITUISCE tutti i dati del sito: parti sempre dall\'ultimo file scaricato.'],
 ];
 $('dl').onclick = async () => {
   try {
     const d = await api('/api/data');
-    const sheets = [{ name: 'Leggimi', text: LEGGIMI }, ...SCHEMA.map(s => ({ ...s, rows: d.sheets[s.name] || [] }))];
-    const blob = writeWorkbook(sheets);
+    const blob = writeWorkbook([{ name: 'Leggimi', text: LEGGIMI }, ...SCHEMA.map(s => ({ ...s, rows: d.sheets[s.name] || [] }))]);
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = `Cussanio_Database_${new Date().toISOString().slice(0, 10)}.xlsx`;
@@ -312,24 +522,6 @@ $('up').onchange = async e => {
     msg('upMsg', j.warnings.length ? 'info' : 'ok', `Dati caricati. Il sito è già aggiornato.` +
       (j.warnings.length ? `<br><b>Da controllare (${j.warnings.length}):</b><ul>${j.warnings.slice(0, 30).map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : ''));
   } catch (err) { msg('upMsg', 'err', esc(err.message)); }
-};
-
-/* ---------------- Tuttocampo ---------------- */
-function renderSync(m){
-  if (!m){ $('syncInfo').innerHTML = 'Nessun aggiornamento ancora eseguito.'; return; }
-  const li = a => a.length ? `<ul class="list">${a.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : '<div class="sub">nessuno</div>';
-  $('syncInfo').innerHTML = `<div style="color:var(--ink)"><b>${fmtDT(m.at)}</b> · ${m.ok ? 'completato' : 'non riuscito'} · pagine lette: ${m.pages}${m.pagesFailed?.length ? ` (non lette: ${m.pagesFailed.length})` : ''}</div>
-    ${m.errors?.length ? `<div class="msg err">${m.errors.map(esc).join('\n')}</div>` : ''}
-    <h3 style="font-size:14px;margin-top:10px;color:var(--ink)">Modifiche applicate</h3>${li([...(m.updated || []), ...(m.added || [])])}
-    <h3 style="font-size:14px;margin-top:10px;color:var(--ink)">Differenze da controllare</h3>${li(m.conflicts || [])}
-    ${m.pagesFailed?.length ? `<h3 style="font-size:14px;margin-top:10px;color:var(--ink)">Pagine non lette</h3>${li(m.pagesFailed)}` : ''}`;
-}
-$('syncNow').onclick = async () => {
-  $('syncNow').disabled = true; msg('syncMsg', 'info', 'Lettura di Tuttocampo in corso (fino a 30 secondi)…');
-  try { const m = await api('/api/admin/sync', { method: 'POST' }); await reload();
-        msg('syncMsg', m.ok ? 'ok' : 'err', m.ok ? `Fatto: ${m.updated.length + m.added.length} modifiche, ${m.conflicts.length} differenze.` : 'Aggiornamento non riuscito: vedi sotto.'); }
-  catch (e) { msg('syncMsg', 'err', esc(e.message)); }
-  finally { $('syncNow').disabled = false; }
 };
 
 if (TOKEN) start();
